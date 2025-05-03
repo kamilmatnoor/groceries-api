@@ -29,7 +29,7 @@ router.put("/:id", (req, res, next) => {
 });
 
 router.delete("/:id", (req, res, next) => {
-    Products.deleteProduct().then(response => {
+    Products.deleteProduct(req.params.id).then(response => {
         res.json(response);
     });
 });

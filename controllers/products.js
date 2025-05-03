@@ -22,18 +22,20 @@ const Product = (() => {
 
 
     const update = (reqProduct, id) =>
-        new Promise(async (resolve, reject) => {                    
+        new Promise(async (resolve, reject) => {
             const updatedProduct = await ProductModel.findByIdAndUpdate(
-              id,
-              reqProduct,
-              { new: true }
+                id,
+                reqProduct,
+                { new: true }
             );
-          
+
             resolve({ error: false, message: "Success: update Product, response from controller", data: updatedProduct });
         });
 
     const deleteProduct = (id) =>
-        new Promise((resolve, reject) => {
+        new Promise(async (resolve, reject) => {
+            console.log(id);
+            await ProductModel.findByIdAndDelete(id);
             resolve({ error: false, message: "Success: delete Product, response from controller" });
         });
 
