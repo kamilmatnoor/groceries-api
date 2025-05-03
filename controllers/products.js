@@ -21,9 +21,15 @@ const Product = (() => {
         });
 
 
-    const update = (product, id) =>
-        new Promise((resolve, reject) => {
-            resolve({ error: false, message: "Success: update Product, response from controller" });
+    const update = (reqProduct, id) =>
+        new Promise(async (resolve, reject) => {                    
+            const updatedProduct = await ProductModel.findByIdAndUpdate(
+              id,
+              reqProduct,
+              { new: true }
+            );
+          
+            resolve({ error: false, message: "Success: update Product, response from controller", data: updatedProduct });
         });
 
     const deleteProduct = (id) =>
