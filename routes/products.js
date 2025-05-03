@@ -10,4 +10,28 @@ router.get('/', (req, res, next) => {
     });
 });
 
+router.get('/:id', (req, res, next) => {
+    Products.getById(req.params.id).then(response => {
+        res.json(response);
+    });
+});
+
+router.post("/", (req, res, next) => {
+    Products.create(req.body).then(response => {
+        res.json(response);
+    });
+});
+
+router.put("/:id", (req, res, next) => {
+    Products.update(req.body, req.params.id).then(response => {
+        res.json(response);
+    });
+});
+
+router.delete("/:id", (req, res, next) => {
+    Products.deleteProduct().then(response => {
+        res.json(response);
+    });
+});
+
 module.exports = router;
