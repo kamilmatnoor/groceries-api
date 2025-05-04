@@ -5,7 +5,8 @@ const Products = require('../controllers/products');
 
 /* GET intial products routes. */
 router.get('/', (req, res, next) => {
-    Products.getAll().then(response => {
+    const options = req.query;
+    Products.get(options).then(response => {
         res.json(response);
     });
 });

@@ -1,10 +1,32 @@
 const ProductModel = require("../models/product");
 
 const Product = (() => {
-    const getAll = () =>
+    const get = (options) =>
         new Promise(async (resolve, reject) => {
-            const product = await ProductModel.find();
-            resolve({ error: false, message: "Success: getAll Product, response from controller", data: product });
+            const query = {};
+
+            if (options.searchText && options.searchText.trim() !== '') {
+                query.$or = [
+                    { product_name: { $regex: options.searchText, $options: 'i' } },
+                    { product_brand: { $regex: options.searchText, $options: 'i' } }
+                ];
+            }
+
+            const sortOptions = {};
+            if (options.sortField && options.sortOrder) {
+                sortOptions[options.sortField] = options.sortOrder === 'asc' ? 1 : -1;
+            }
+
+            const page = parseInt(options.currentPage) || 1;
+            const limit = parseInt(options.itemsPerPage) || 20;
+            const skip = (page - 1) * limit;
+
+            const products = await ProductModel.find(query)
+                .sort(sortOptions)
+                .skip(skip)
+                .limit(limit);
+                console.log(products);
+            resolve({ error: false, message: "Success: getAll Product, response from controller", data: products });
         });
 
     const getById = (id) =>
@@ -40,7 +62,7 @@ const Product = (() => {
         });
 
     return {
-        getAll,
+        get,
         getById,
         create,
         update,
