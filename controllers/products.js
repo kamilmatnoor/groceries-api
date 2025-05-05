@@ -30,7 +30,7 @@ const Product = (() => {
 
             resolve({
                 error: false,
-                message: "Success: getAll Product, response from controller",
+                message: "Success",
                 data: products,
                 totals
             });
@@ -39,14 +39,14 @@ const Product = (() => {
     const getById = (id) =>
         new Promise(async (resolve, reject) => {
             const product = await ProductModel.findById(id);
-            resolve({ error: false, message: "Success: getById Product, response from controller", data: product });
+            resolve({ error: false, message: "Success", data: product });
         });
 
     const create = (reqProduct) =>
         new Promise(async (resolve, reject) => {
             const { product_name, product_description, product_brand, product_barcode } = reqProduct;
             const product = await ProductModel.create({ product_name, product_description, product_brand, product_barcode, });
-            resolve({ error: false, message: "Success: create Product, response from controller", data: product });
+            resolve({ error: false, message: "Success", data: product });
         });
 
 
@@ -58,14 +58,14 @@ const Product = (() => {
                 { new: true }
             );
 
-            resolve({ error: false, message: "Success: update Product, response from controller", data: updatedProduct });
+            resolve({ error: false, message: "Success", data: updatedProduct });
         });
 
     const deleteProduct = (id) =>
         new Promise(async (resolve, reject) => {
             console.log(id);
             await ProductModel.findByIdAndDelete(id);
-            resolve({ error: false, message: "Success: delete Product, response from controller" });
+            resolve({ error: false, message: "Success" });
         });
 
     return {
