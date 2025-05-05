@@ -21,12 +21,19 @@ const Product = (() => {
             const limit = parseInt(options.itemsPerPage) || 20;
             const skip = (page - 1) * limit;
 
+            const totals = await ProductModel.countDocuments(query);
+
             const products = await ProductModel.find(query)
                 .sort(sortOptions)
                 .skip(skip)
                 .limit(limit);
-                console.log(products);
-            resolve({ error: false, message: "Success: getAll Product, response from controller", data: products });
+
+            resolve({
+                error: false,
+                message: "Success: getAll Product, response from controller",
+                data: products,
+                totals
+            });
         });
 
     const getById = (id) =>
