@@ -27,6 +27,7 @@ const Product = (() => {
             try {
                 totals = await ProductModel.countDocuments(query);
                 const products = await ProductModel.find(query)
+                .collation({ locale: 'en', strength: 2 })
                     .sort(sortOptions)
                     .skip(skip)
                     .limit(limit);
