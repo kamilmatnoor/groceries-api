@@ -57,16 +57,29 @@ router.post("/", validateCreate, (req, res, next) => {
     });
 });
 
-router.put("/:id", (req, res, next) => {
-    Products.update(req.body, req.params.id).then(response => {
-        res.json(response);
-    });
+
+var validateUpdate = [...validateGetById, ...validateCreate];
+
+router.put("/:id", validateUpdate, async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ error: true, message: "Failed validation", errors: errors.array(), data: {} });
+    }
+    
+    const response = await Products.update(req.body, req.params.id);
+    res.json(response);
 });
 
-router.delete("/:id", (req, res, next) => {
-    Products.deleteProduct(req.params.id).then(response => {
-        res.json(response);
-    });
+router.delete("/:id", validateGetById, async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ error: true, message: "Failed validation", errors: errors.array(), data: {} });
+    }
+
+    const response = await Products.deleteProduct(req.params.id);
+    res.json(response);
 });
 
 module.exports = router;
