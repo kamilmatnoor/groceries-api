@@ -39,7 +39,13 @@ const Product = (() => {
     const getById = (id) =>
         new Promise(async (resolve, reject) => {
             const product = await ProductModel.findById(id);
-            resolve({ error: false, message: "Success", data: product });
+            if (!product) {
+                resolve({ error: false, message: "Success: Incorrect ID or Product not exist", data: {} });
+            }
+            else {
+                resolve({ error: false, message: "Success", data: product });
+            }
+            return;
         });
 
     const create = (reqProduct) =>
