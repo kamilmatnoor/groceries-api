@@ -21,29 +21,45 @@ const Product = (() => {
             const limit = parseInt(options.itemsPerPage) || 20;
             const skip = (page - 1) * limit;
 
-            const totals = await ProductModel.countDocuments(query);
+            let totals = 0;
 
-            const products = await ProductModel.find(query)
-                .sort(sortOptions)
-                .skip(skip)
-                .limit(limit);
 
-            resolve({
-                error: false,
-                message: "Success",
-                data: products,
-                totals
-            });
+            try {
+                totals = await ProductModel.countDocuments(query);
+                const products = await ProductModel.find(query)
+                    .sort(sortOptions)
+                    .skip(skip)
+                    .limit(limit);
+
+                if (!products) {
+                    resolve({ error: true, message: "Failed: Cannot retrieve product details. Please try again.", data: [] });
+                }
+                else {
+                    resolve({
+                        error: false,
+                        message: "Product retrieved successfully.",
+                        data: products,
+                        totals
+                    });
+                }
+            } catch (error) {
+                resolve({ error: true, message: "Failed: Something went wrong. Please try again.", data: [] });
+            }
         });
 
     const getById = (id) =>
         new Promise(async (resolve, reject) => {
-            const product = await ProductModel.findById(id);
-            if (!product) {
-                resolve({ error: false, message: "Success: Incorrect ID or Product not exist", data: {} });
-            }
-            else {
-                resolve({ error: false, message: "Success", data: product });
+            try {
+                const product = await ProductModel.findById(id);
+
+                if (!product) {
+                    resolve({ error: true, message: "Failed: Cannot retrieve product details. Please try again.", data: {} });
+                }
+                else {
+                    resolve({ error: false, message: "Product retrieved successfully.", data: product });
+                }
+            } catch (error) {
+                resolve({ error: true, message: "Failed: Something went wrong. Please try again.", data: {} });
             }
             return;
         });
@@ -51,27 +67,55 @@ const Product = (() => {
     const create = (reqProduct) =>
         new Promise(async (resolve, reject) => {
             const { product_name, product_description, product_brand, product_barcode } = reqProduct;
-            const product = await ProductModel.create({ product_name, product_description, product_brand, product_barcode, });
-            resolve({ error: false, message: "Success", data: product });
+            try {
+                const newProduct = await ProductModel.create({ product_name, product_description, product_brand, product_barcode, });
+                if (!newProduct) {
+                    resolve({ error: true, message: "Failed: Cannot add product. Please try again.", data: {} });
+                }
+                else {
+                    resolve({ error: false, message: "Product added successfully.", data: newProduct });
+                }
+            } catch (error) {
+                resolve({ error: true, message: "Failed: Something went wrong. Please try again.", data: {} });
+            }
+            return;
         });
 
 
     const update = (reqProduct, id) =>
         new Promise(async (resolve, reject) => {
-            const updatedProduct = await ProductModel.findByIdAndUpdate(
-                id,
-                reqProduct,
-                { new: true }
-            );
-
-            resolve({ error: false, message: "Success", data: updatedProduct });
+            try {
+                const updatedProduct = await ProductModel.findByIdAndUpdate(
+                    id,
+                    reqProduct,
+                    { new: true }
+                );
+                if (!updatedProduct) {
+                    resolve({ error: true, message: "Failed: Incorrect ID or Product not exist.", data: {} });
+                }
+                else {
+                    resolve({ error: false, message: "Product updated successfully.", data: updatedProduct });
+                }
+            } catch (error) {
+                resolve({ error: true, message: "Failed: Something went wrong. Please try again.", data: {} });
+            }
+            return;
         });
 
     const deleteProduct = (id) =>
         new Promise(async (resolve, reject) => {
-            console.log(id);
-            await ProductModel.findByIdAndDelete(id);
-            resolve({ error: false, message: "Success" });
+            try {
+                const product = await ProductModel.findByIdAndDelete(id);
+                if (!product) {
+                    resolve({ error: true, message: "Failed: Incorrect ID or Product not exist.", data: {} });
+                }
+                else {
+                    resolve({ error: false, message: "Product deleted successfully.", data: product });
+                }
+            } catch (error) {
+                resolve({ error: true, message: "Failed: Something went wrong. Please try again.", data: {} });
+            }
+            return;
         });
 
     return {
